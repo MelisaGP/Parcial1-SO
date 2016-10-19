@@ -118,11 +118,13 @@ if __name__ == "__main__":
 
 
 **Creo el archivo de comandos**
+
 $ vi filesystem_01_commands.py
 
 from subprocess import Popen, PIPE
 
 def get_all_file():
+  
   grep_process = Popen(["grep","/home/filesystem_user"], stdout=PIPE, stderr=PIPE)
   
   file_list = Popen(["ls"], stdin=grep_process.stdout, stdout=PIPE, stderr=PIPE).communicate()[0].split('\n')
