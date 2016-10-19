@@ -6,7 +6,7 @@
 **Codigo antiguo:** 13103005.
 **Tema:** Comandos de Linux, Servicios web con Python  
 
-Consigne los pasos necesarios para la ejecución y prueba de su solución. Tenga en cuenta incluir la creación del ambiente, activación, apertura de puertos, reinicio de servicios, entre otros .
+-Consigne los pasos necesarios para la ejecución y prueba de su solución. Tenga en cuenta incluir la creación del ambiente, activación, apertura de puertos, reinicio de servicios, entre otros .
 
 Primero creo el archivo filesystem_user, accedo a éste y despues creo los entornos virtuales.
 en root: cd /home/filesystem_user
@@ -15,7 +15,7 @@ $ mkdir fylesystem
 $ cd filesystem
 $ virtualenv flask_filesystem
 
-Despues de haber creado el entorno,hago la activación del ambiente virtual 
+Despues de haber creado el entorno, activo el ambiente virtual 
 
 $ . flask_filesystem/bin/activate
 
@@ -24,16 +24,17 @@ Después de haber activado el ambiente activo, instalo la libreria Flask
 $ pip install Flask
 
 
-Realice la implementación del servicio web para la URI /files .
+-Realice la implementación del servicio web para la URI /files .
 
-Creo los archivos de python uno para los  comandos  y el otro para los metodos “GET”,”POST”,”PUT” y “DELETE”  
+**Creo los archivos de python uno para los  comandos  y el otro para los metodos “GET”,”POST”,”PUT” y “DELETE”  **
 
+**Creo el archivo para los métodos “GET”,”POST”,”PUT” y “DELETE” **
 $ vi filesystem_01.py
 
 from flask import Flask, abort, request
 import json
 
-from filesystem_01_commands import get_all_users, add_user, remove_user
+from filesystem_01_commands import get_all_file, add_file, remove_file
 app = Flask(__name__)
 
 api_url = '/v1.0'
@@ -48,9 +49,9 @@ def create_file():
   if filename in get_all_file():
     return "file already exist", 400
   if add_file(filename,content):
-    return "file created", 201
+    return "HTTP 201 CREATED", 201
   else:
-    return "error while creating user", 400
+    return "error while creating file", 400
 
 @app.route(api_url+'/files',methods=['GET'])
 def read_file():
@@ -68,29 +69,30 @@ def delete_file():
   for filename in get_all_file():
     if not remove_file(filename):
         error = True
-
   if error:
-    return 'some files were not deleted', 400
+    return 'some files were not deleted', 404
   else:
-    return 'all files were deleted', 200
+    return 'HTTP 200 OK', 200
 
 if __name__ == "__main__":
   app.run(host='0.0.0.0',port=8088,debug='True')
 
 
+**Creo el archivo de comandos**
 $ vi filesystem_01_commands.py
 
-from flask import Popen, PIPE
+from subprocess import Popen, PIPE
 
 def get_all_file():
   grep_process = Popen(["grep","/home/filesystem_user"], stdout=PIPE, stderr=PIPE)
-  user_list = Popen(["ls"], stdin=grep_process.stdout, stdout=PIPE, stderr=PIPE).communicate()[0].split('\n')
+  file_list = Popen(["ls"], stdin=grep_process.stdout, stdout=PIPE, stderr=PIPE).communicate()[0].split('\n')
   return filter(None,file_list)
 
 def add_file(filename,content):
+  add_process= Popen(["touch",filename])
   add_process = Popen(["echo"," ' ",content," ' ",">>","/files",filename], stdout=PIPE, stderr=PIPE)
   add_process.wait()
-  return True if username in get_all_file() else False
+  return True if filename in get_all_file() else False
 
 def remove_file(filename):
   vip = ["carta", "listado", "tareas", "recordatorio"]
@@ -99,12 +101,14 @@ def remove_file(filename):
   else:
     remove_process = Popen(["rm",filename], stdout=PIPE, stderr=PIPE)
     remove_process.wait()
-    return False if username in get_all_file() else True
+    return False if filename in get_all_file() else True
 
 
-Realice la implementación del servicio web para la URI /files/recently_created.
 
-Ahora, se implementan los anteriores metodos, pero para los archivos que se crearon recientemente
+-Realice la implementación del servicio web para la URI /files/recently_created.
+
+**Ahora, se implementan los anteriores metodos, pero para los archivos que se crearon recientemente**
+Como no aplica para el ”POST”,”PUT” y el “DELETE”, entonces les coloco error 404 y solo trabajo el "GET".
 
 from flask import Flask, abort, request
 import json
@@ -142,16 +146,21 @@ if __name__ == "__main__":
   app.run(host='0.0.0.0',port=8088,debug='True')
 
 
-Comandos
+**Comandos para el archivo reciente, sólo trae los 3 últimos archivos que se han creado y modificado.**
+Como no aplica para el ”POST”,”PUT” y el “DELETE”, solo trabajo el "GET".
+
+ls -ltrp le pasa como entrada a  grep -v / su resultado
+grep -v / le pasa como entrada a  tail -3 su resultado
+
 
 from subprocess import Popen, PIPE
 
 def get_all_file():
   grep_process = Popen(["grep","home/filesystem_user"], stdout=PIPE, stderr=PIPE)
-  file_list = Popen(["ls -ltrp | grep -v / | tail -1"], stdin=grep_process.stdout, stdout=PIPE, stderr=PIPE).communicate()[0].split('\n')
+  file_list = Popen(["ls -ltrp | grep -v / | tail -3"], stdin=grep_process.stdout, stdout=PIPE, stderr=PIPE).communicate()[0].split('\n')
   return filter(None,file_list)
 
-La url para la prubas son:
+**La url que utilicé para la prubas son:**
 
 
 para los archivos:
