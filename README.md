@@ -10,9 +10,13 @@
 
 Primero creo el archivo filesystem_user, accedo a éste y despues creo los entornos virtuales.
 en root: cd /home/filesystem_user
+
 $ cd ~/
+
 $ mkdir fylesystem
+
 $ cd filesystem
+
 $ virtualenv flask_filesystem
 
 Despues de haber creado el entorno, activo el ambiente virtual 
@@ -32,9 +36,11 @@ $ pip install Flask
 $ vi filesystem_01.py
 
 from flask import Flask, abort, request
+
 import json
 
 from filesystem_01_commands import get_all_file, add_file, remove_file
+
 app = Flask(__name__)
 
 api_url = '/v1.0'
