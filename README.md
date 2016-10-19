@@ -9,7 +9,7 @@
 Consigne los pasos necesarios para la ejecución y prueba de su solución. Tenga en cuenta incluir la creación del ambiente, activación, apertura de puertos, reinicio de servicios, entre otros .
 
 Primero creo el archivo filesystem_user, accedo a éste y despues creo los entornos virtuales.
-# cd /home/filesystem_user
+en root: cd /home/filesystem_user
 $ cd ~/
 $ mkdir fylesystem
 $ cd filesystem
@@ -102,8 +102,6 @@ def remove_file(filename):
     return False if username in get_all_file() else True
 
 
-
-
 Realice la implementación del servicio web para la URI /files/recently_created.
 
 Ahora, se implementan los anteriores metodos, pero para los archivos que se crearon recientemente
@@ -144,7 +142,7 @@ if __name__ == "__main__":
   app.run(host='0.0.0.0',port=8088,debug='True')
 
 
-#Comandos
+Comandos
 
 from subprocess import Popen, PIPE
 
